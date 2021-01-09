@@ -1,0 +1,87 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+
+import time
+import random
+from datetime import date
+import calendar
+
+
+greec = "93128"
+german = "110010"
+engl = "93041"
+wr = "110410"
+physik = "114531"
+
+messages = ["Guten Morgen! Ich bin wach und arbeitsbereit!", "Moin. Bin dana am arbeiten", "Melde mich zum Dienst!", "Morgen allerseits. Gehe dann an die Arbeit.", "Helo, mache jz die Aufgaben."]
+
+# Url Adds die ersten Stunden verschiedener Tage
+lessons = {"Monday" : "93128", "Tuesday" : "110010", "Wednesday" : "93041", "Thursday" : "110410", "Friday" : "114531"}
+
+class Speaker:
+    def __init__(self, email, password):
+        self.email = email
+        self.password = password
+
+        self.browser = webdriver.Chrome("./chromedriver.exe")
+
+
+
+
+
+    def WaitForObject(self, type, string):
+        return WebDriverWait(self.browser, 3).until(EC.presence_of_element_located((type, string)))
+
+    def WaitForObjects(self, type, string):
+        return WebDriverWait(self.browser, 3).until(EC.presence_of_all_elements_located((type, string)))
+
+
+
+    def login(self):
+        self.browser.get("https://homeworker.li/dashboard")
+
+        time.sleep(3)
+        pop = self.browser.find_elements_by_xpath("//span[2]")
+        pop[0].click()
+
+        time.sleep(2)
+        mail = self.browser.find_elements_by_xpath("//input[1]")
+        mail[0].send_keys(self.email)
+
+        cont = self.WaitForObject(By.CSS_SELECTOR, "button.btn.btn-light-blue.center").click()
+
+        time.sleep(2)
+        word = self.browser.find_elements_by_xpath("//input[1]")
+        word[0].send_keys(self.password)
+
+        cont = self.WaitForObject(By.CSS_SELECTOR, "button.btn.btn-light-blue.center").click()
+        time.sleep(3)
+
+
+    def chat(self, lesson, message):
+        self.browser.get("https://homeworker.li/chats/" + lesson)
+
+        time.sleep(5)
+        self.browser.find_element_by_id('new-text-message').send_keys(message)
+        
+
+    
+
+
+
+now = datetime.datetime.now()
+my_date = date.today()
+
+
+
+speaker = Speaker("", "") # Email und Passwort
+speaker.login()
+
+"""
+if now.hour == 8 and calendar.day_name[my_date.weekday()] != "Saturday" and calendar.day_name[my_date.weekday()] != "Sunday":
+    speaker.chat(lessons[calendar.day_name[my_date.weekday()]], random.choice(messages))
+"""
+#speaker.chat(lessons[calendar.day_name[my_date.weekday()]], random.choice(messages))
